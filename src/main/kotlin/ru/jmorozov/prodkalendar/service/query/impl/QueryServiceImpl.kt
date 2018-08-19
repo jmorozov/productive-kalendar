@@ -17,7 +17,7 @@ class QueryServiceImpl @Autowired constructor(
     override fun holidaysCountBetween(from: LocalDate, to: LocalDate): Int {
         val holidays: TreeSet<LocalDate> = fileService.readDatesFromJsonFile(jsonPath)
 
-        return holidays.count { it.isAfter(from) && it.isBefore(to) }
+        return holidays.count { (it.isAfter(from) || it.isEqual(from)) && it.isBefore(to) }
     }
 
     override fun workdaysCountBetween(from: LocalDate, to: LocalDate): Int {
