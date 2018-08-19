@@ -2,11 +2,12 @@ package ru.jmorozov.prodkalendar.service.command.impl
 
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVRecord
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
-import ru.jmorozov.prodkalendar.service.command.FileService
+import ru.jmorozov.prodkalendar.service.command.CommandFileService
 import ru.jmorozov.prodkalendar.service.command.ParsingService
 import ru.jmorozov.prodkalendar.service.command.SiteParsingService
 import java.io.FileReader
@@ -16,11 +17,11 @@ import javax.cache.annotation.CacheRemoveAll
 
 @Service
 class ParsingServiceImpl @Autowired constructor(
-        @Value("\${gov.url}") val govUrl: String,
-        @Value("\${csv.path}") val csvPath: String,
-        @Value("\${json.path}") val jsonPath: String,
-        val siteParsingService: SiteParsingService,
-        val fileService: FileService
+        @Value("\${gov.url}") private val govUrl: String,
+        @Value("\${csv.path}") private val csvPath: String,
+        @Value("\${json.path}") private val jsonPath: String,
+        private val siteParsingService: SiteParsingService,
+        private val fileService: CommandFileService
 ) : ParsingService {
 
     enum class Months(val number: Int,val rus: String) {
@@ -38,8 +39,8 @@ class ParsingServiceImpl @Autowired constructor(
         DECEMBER(12, "Декабрь")
     }
 
-    companion object {
-        val log = LoggerFactory.getLogger(ParsingServiceImpl::class.java.name)
+    private companion object {
+        val log: Logger = LoggerFactory.getLogger(ParsingServiceImpl::class.java.name)
     }
 
     @CacheRemoveAll(cacheName = "holidays")

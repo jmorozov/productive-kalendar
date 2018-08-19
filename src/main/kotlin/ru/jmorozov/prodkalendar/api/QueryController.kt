@@ -7,7 +7,7 @@ import ru.jmorozov.prodkalendar.utils.normalizeDateRange
 import java.time.LocalDate
 
 @RestController
-class QueryController(val queryService: QueryService) {
+class QueryController(private val queryService: QueryService) {
 
     @PostMapping("/api/query/holidays/between")
     fun getHolidaysBetween(@RequestBody range: DateRange): Int {

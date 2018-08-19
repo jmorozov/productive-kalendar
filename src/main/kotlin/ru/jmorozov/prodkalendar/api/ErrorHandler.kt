@@ -16,7 +16,7 @@ import javax.validation.ValidationException
 @RestControllerAdvice
 class ErrorHandler: ResponseEntityExceptionHandler() {
 
-    companion object {
+    private companion object {
         val log: Logger = LoggerFactory.getLogger(ErrorHandler::class.java.name)
     }
 
@@ -31,7 +31,7 @@ class ErrorHandler: ResponseEntityExceptionHandler() {
     fun processBusinessRuleException(ex: ValidationException): ResponseEntity<String> {
         log.info("Incorrect request", ex)
 
-        return ResponseEntity("Incorrect request", HttpStatus.BAD_REQUEST)
+        return ResponseEntity("Incorrect request. ${ex.message}", HttpStatus.BAD_REQUEST)
     }
 
     @ExceptionHandler(Exception::class)

@@ -5,7 +5,7 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
-import ru.jmorozov.prodkalendar.service.command.FileService
+import ru.jmorozov.prodkalendar.service.query.QueryFileService
 import java.time.LocalDate
 import java.util.*
 
@@ -17,7 +17,7 @@ object QueryServiceImplSpec: Spek({
     val dayAfterTomorrow = LocalDate.now().plusDays(2)
 
     given("Query Service and one holiday - $now") {
-        val stubFileService = mock(FileService::class)
+        val stubFileService = mock(QueryFileService::class)
         When calling stubFileService.readDatesFromJsonFile(any()) itReturns TreeSet(setOf(now))
         val queryService = QueryServiceImpl("someJsonPath", stubFileService)
 
