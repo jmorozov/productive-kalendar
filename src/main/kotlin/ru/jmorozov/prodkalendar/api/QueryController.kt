@@ -5,6 +5,8 @@ import ru.jmorozov.prodkalendar.dto.DateRange
 import ru.jmorozov.prodkalendar.service.query.QueryService
 import ru.jmorozov.prodkalendar.utils.normalizeDateRange
 import java.time.LocalDate
+import java.time.format.DateTimeParseException
+import javax.xml.bind.ValidationException
 
 @RestController
 class QueryController(private val queryService: QueryService) {
@@ -25,8 +27,12 @@ class QueryController(private val queryService: QueryService) {
 
     @GetMapping("/api/query/{dateStr}/is/holiday")
     fun isHoliday(@PathVariable("dateStr") dateStr: String): Boolean {
-        val date: LocalDate = LocalDate.parse(dateStr)
+        try {
+            val date: LocalDate = LocalDate.parse(dateStr)
 
-        return queryService.isHoliday(date)
+            return queryService.isHoliday(date)
+        } catch (e: DateTimeParseException) {
+            throw ValidationException("Incorrect date in request", e)
+        }
     }
 }
