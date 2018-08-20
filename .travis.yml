@@ -1,0 +1,12 @@
+language: java
+
+branches:
+  only:
+  - master
+  - /^release.*$/
+
+jdk:
+- oraclejdk8
+
+before_install:
+- chmod +x gradlew
