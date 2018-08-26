@@ -14,7 +14,7 @@ import javax.cache.annotation.CacheResult
 
 @Service
 class QueryFileServiceImpl @Autowired constructor(
-        private val objectMapper: ObjectMapper
+    private val objectMapper: ObjectMapper
 ) : QueryFileService {
 
     private companion object {

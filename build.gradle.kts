@@ -9,6 +9,7 @@ import org.junit.platform.gradle.plugin.JUnitPlatformExtension
 buildscript {
 	repositories {
 		mavenCentral()
+        jcenter()
 	}
 
     val kotlinVersion by extra { "1.2.50" }
@@ -26,6 +27,7 @@ plugins {
     kotlin("jvm").version("1.2.51")
     application
     java
+    id("io.gitlab.arturbosch.detekt").version("1.0.0.RC8")
 }
 
 apply {
@@ -83,6 +85,8 @@ dependencies {
     testCompile("org.jetbrains.spek:spek-api:1.1.5")
     testRuntime("org.jetbrains.spek:spek-junit-platform-engine:1.1.5")
     testImplementation("org.amshove.kluent:kluent:1.40")
+
+    detekt("io.gitlab.arturbosch.detekt:detekt-formatting:1.0.0.RC8")
 }
 
 // extension for configuration
@@ -97,4 +101,16 @@ fun FiltersExtension.engines(setup: EnginesExtension.() -> Unit) {
         is ExtensionAware -> extensions.getByType(EnginesExtension::class.java).setup()
         else -> throw Exception("${this::class} must be an instance of ExtensionAware")
     }
+}
+
+detekt {
+    version = "1.0.0.RC8"
+    profile("main", Action {
+        input = "src/main/kotlin"
+        config = file("detekt.yml")
+        filters = ".*/resources/.*,.*/tmp/.*"
+        output = "reports"
+        outputName = "detekt-report"
+        baseline = "reports/baseline.xml"
+    })
 }

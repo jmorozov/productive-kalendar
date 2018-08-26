@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration
 class JacksonConfig {
 
     @Bean
-    fun objectMapper(): ObjectMapper =  jacksonObjectMapper()
+    fun objectMapper(): ObjectMapper = jacksonObjectMapper()
             .registerModule(JavaTimeModule())
             .registerModule(KotlinModule())
             .disable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)

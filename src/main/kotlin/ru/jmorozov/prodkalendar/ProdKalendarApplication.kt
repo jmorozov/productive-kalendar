@@ -7,5 +7,6 @@ import org.springframework.boot.runApplication
 class ProdKalendarApplication
 
 fun main(args: Array<String>) {
+    @Suppress("SpreadOperator")
     runApplication<ProdKalendarApplication>(*args)
 }
