@@ -10,19 +10,32 @@ Russian productive calendar with REST API. **K**alendar, because it is written i
 
 ## Run
 
+### Docker
+
+Всё становится лучше с Docker
+
+```bash
+docker build --no-cache -t productive-kalendar .
+docker run -it --rm -p 8080:8080 productive-kalendar
+```
+
+После чего приложение доступно по адресу http://localhost:8080/
+
+### Локально
+
 Тут всё типично для приложения spring-boot и gradle-wrapper.
 
-### Сборка проекта
+#### Сборка проекта
 ```bash
 ./gradlew build
 ```
 
-### Сборка проекта без тестов
+#### Сборка проекта без тестов
 ```bash
 ./gradlew build -x test
 ```
 
-### Запуск статического анализатора
+#### Запуск статического анализатора
 
 В проекте используется статический анализ и линтинг средствами detekt.
 
@@ -30,7 +43,7 @@ Russian productive calendar with REST API. **K**alendar, because it is written i
 ./gradlew detektCheck
 ```
 
-### Запуск приложения
+#### Запуск приложения
 ```bash
 ./gradlew bootRun
 ```
