@@ -70,9 +70,30 @@ docker run -it --rm -p 8080:8080 productive-kalendar
 
 #### Является ли данная дата выходным днём
 
-**GET** http://localhost:8080/api/query/{date}/is/holiday
+**GET** http://localhost:8080/api/query/is/{date}/holiday
 
 **RESPONSE** boolean, true - выходной, false - рабочий день
+
+#### Является ли завтра выходным днём
+
+**GET** http://localhost:8080/api/query/is/tomorrow/holiday
+
+**RESPONSE** boolean, true - выходной, false - рабочий день
+
+#### Получить список всех выходных, которые хранятся в системе
+
+**GET** http://localhost:8080/api/query/all/holidays
+
+**RESPONSE** отсортированный по возрастанию список дат
+
+#### Получить список всех выходных за определенный год
+
+{year} - Int, год в диапазоне [1999, 2100]
+
+**GET** http://localhost:8080/api/query/{year}/holidays
+
+**RESPONSE** отсортированный по возрастанию список дат. Если за указанный год в системе нет информации, то вернется пустой
+список
 
 #### Получить количество рабочих дней между датами
 

@@ -7,6 +7,7 @@ import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import ru.jmorozov.prodkalendar.service.query.QueryFileService
 import java.time.LocalDate
+import java.time.Year
 import java.util.*
 
 object QueryServiceImplSpec: Spek({
@@ -15,10 +16,13 @@ object QueryServiceImplSpec: Spek({
     val now = LocalDate.now()
     val tomorrow = LocalDate.now().plusDays(1)
     val dayAfterTomorrow = LocalDate.now().plusDays(2)
+    val allHolidays = TreeSet(setOf(now))
+    val year = Year.now()
+    val nextYear = year.plusYears(1)
 
     given("Query Service and one holiday - $now") {
         val stubFileService = mock(QueryFileService::class)
-        When calling stubFileService.readDatesFromJsonFile(any()) itReturns TreeSet(setOf(now))
+        When calling stubFileService.readDatesFromJsonFile(any()) itReturns allHolidays
         val queryService = QueryServiceImpl("someJsonPath", stubFileService)
 
         val testList = listOf(
@@ -61,6 +65,34 @@ object QueryServiceImplSpec: Spek({
             val isHoliday = queryService.isHoliday(yesterday)
             it("should return false") {
                 isHoliday.shouldBeFalse()
+            }
+        }
+
+        on("is tomorrow holiday") {
+            val isHoliday = queryService.isTomorrowHoliday()
+            it("should return false") {
+                isHoliday.shouldBeFalse()
+            }
+        }
+
+        on("get all holidays") {
+            val holidays = queryService.getAllHolidays()
+            it("should return all holidays") {
+                holidays shouldEqual allHolidays
+            }
+        }
+
+        on("get holidays by $year year") {
+            val holidays = queryService.getHolidaysByYear(year)
+            it("should return all holidays in $year year") {
+                holidays shouldEqual allHolidays
+            }
+        }
+
+        on("get holidays by $nextYear year") {
+            val holidays = queryService.getHolidaysByYear(nextYear)
+            it("should return all holidays in $nextYear year") {
+                holidays shouldEqual TreeSet()
             }
         }
     }
