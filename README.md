@@ -103,3 +103,7 @@ docker run -it --rm -p 8080:8080 productive-kalendar
 ```
 
 **RESPONSE** Int - количество выходных дней между датами, не включая последнюю дату
+
+## Telegram bot
+
+Есть возможность поднять [Telegram-бота](https://github.com/jmorozov/productive-kalendar-telegram-bot), который будет стучаться в календарь.
