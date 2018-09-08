@@ -56,13 +56,13 @@ docker run -it --rm -p 8080:8080 productive-kalendar
 (https://data.gov.ru/opendata/7708660670-proizvcalendar). На 2018-08-29 портал предоставляет данные с 1999 г. по 2025 г., 
 однако данные 2019-2025 г. ещё не утверждены правительством РФ и являются приблизительными.
 
-**POST** http://localhost:8080/api/command/parse/gov
+_POST_ http://localhost:8080/api/command/parse/gov
 
-**RESPONSE** обновленный список дат выходных дней в формате json
+_RESPONSE_ обновленный список дат выходных дней в формате json
 
 ### Запросить информацию из календаря
 
-Далее {date} - это дата в формате гггг-ММ-дд, например 2018-08-18. 
+Далее {date} - это дата в формате **гггг-ММ-дд**, например 2018-08-18. 
 
 В запросах, где предполагается интервал дат, последняя дата не включается. Если даты одинаковые, то в ответе будет 0.
 Если одна из дат интервала не указана, то вместо неё будет использоваться текущая дата. Если обе даты не указаны, то
@@ -70,34 +70,34 @@ docker run -it --rm -p 8080:8080 productive-kalendar
 
 #### Является ли данная дата выходным днём
 
-**GET** http://localhost:8080/api/query/is/{date}/holiday
+_GET_ http://localhost:8080/api/query/is/{date}/holiday
 
-**RESPONSE** boolean, true - выходной, false - рабочий день
+_RESPONSE_ boolean, true - выходной, false - рабочий день
 
 #### Является ли завтра выходным днём
 
-**GET** http://localhost:8080/api/query/is/tomorrow/holiday
+_GET_ http://localhost:8080/api/query/is/tomorrow/holiday
 
-**RESPONSE** boolean, true - выходной, false - рабочий день
+_RESPONSE_ boolean, true - выходной, false - рабочий день
 
 #### Получить список всех выходных, которые хранятся в системе
 
-**GET** http://localhost:8080/api/query/all/holidays
+_GET_ http://localhost:8080/api/query/all/holidays
 
-**RESPONSE** отсортированный по возрастанию список дат
+_RESPONSE_ отсортированный по возрастанию список дат
 
 #### Получить список всех выходных за определенный год
 
 {year} - Int, год в диапазоне [1999, 2100]
 
-**GET** http://localhost:8080/api/query/{year}/holidays
+_GET_ http://localhost:8080/api/query/{year}/holidays
 
-**RESPONSE** отсортированный по возрастанию список дат. Если за указанный год в системе нет информации, то вернется пустой
+_RESPONSE_ отсортированный по возрастанию список дат. Если за указанный год в системе нет информации, то вернется пустой
 список
 
 #### Получить количество рабочих дней между датами
 
-**POST** http://localhost:8080/api/query/workdays/between
+_POST_ http://localhost:8080/api/query/workdays/between
 
 *Content-Type: application/json*
 
@@ -108,11 +108,11 @@ docker run -it --rm -p 8080:8080 productive-kalendar
 }
 ```
 
-**RESPONSE** Int - количество рабочих дней между датами, не включая последнюю дату
+_RESPONSE_ Int - количество рабочих дней между датами, не включая последнюю дату
 
 #### Получить количество выходных дней между датами
 
-**POST** http://localhost:8080/api/query/holidays/between
+_POST_ http://localhost:8080/api/query/holidays/between
 
 *Content-Type: application/json*
 
@@ -123,7 +123,33 @@ docker run -it --rm -p 8080:8080 productive-kalendar
 }
 ```
 
-**RESPONSE** Int - количество выходных дней между датами, не включая последнюю дату
+_RESPONSE_ Int - количество выходных дней между датами, не включая последнюю дату
+
+#### Получить весь производственный календарь
+
+_GET_ http://localhost:8080/api/query/productive-calendar
+
+_RESPONSE_ { "holidays": ['1999-01-01', ...], "preholidays": ['1999-03-07', ...] }
+
+#### Получить производственный календарь за определенный год
+
+{year} - Int, год в диапазоне [1999, 2100]
+
+_GET_ http://localhost:8080/api/query/{year}/productive-calendar
+
+_RESPONSE_ { "holidays": ['2018-01-01', ...], "preholidays": ['2018-03-07', ...] }
+
+#### Получить тип дня
+
+_GET_ http://localhost:8080/api/query/day/{date}/type
+
+_RESPONSE_ одно из значений перечисления: WORKDAY, HOLIDAY, PREHOLIDAY
+
+#### Получить тип завтрашнего дня
+
+_GET_ http://localhost:8080/api/query/day/tomorrow/type
+
+_RESPONSE_ одно из значений перечисления: WORKDAY, HOLIDAY, PREHOLIDAY
 
 ## Telegram bot
 

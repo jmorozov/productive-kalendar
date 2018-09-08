@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import ru.jmorozov.prodkalendar.dto.ProductiveCalendar
 import ru.jmorozov.prodkalendar.exception.CsvParsingException
 import ru.jmorozov.prodkalendar.service.command.CommandFileService
 import ru.jmorozov.prodkalendar.service.command.ParsingService
@@ -14,6 +15,7 @@ import ru.jmorozov.prodkalendar.service.command.SiteParsingService
 import java.io.FileReader
 import java.time.LocalDate
 import java.time.Month
+import java.util.*
 import javax.cache.annotation.CacheRemoveAll
 
 @Service
@@ -45,38 +47,44 @@ class ParsingServiceImpl @Autowired constructor(
         const val MAX_DAYS_COUNT_IN_MONTH = 31
     }
 
-    @CacheRemoveAll(cacheName = "holidays")
-    override fun parseGov(): List<LocalDate> {
+    @CacheRemoveAll(cacheName = "productiveCalendar")
+    override fun parseGov(): ProductiveCalendar {
         val downloadHref = siteParsingService.getDownloadHref(govUrl, "a[href*=UTF-8]:contains(Последний набор)")
         fileService.download(downloadHref, csvPath)
-        val holidays: List<LocalDate> = getHolidaysFromCSV()
-        fileService.writeDatesToJsonFile(holidays, jsonPath)
+        val productiveCalendar = getProductiveCalendarFromCSV()
+        fileService.writeDatesToJsonFile(productiveCalendar, jsonPath)
 
-        log.debug("Holidays: $holidays")
+        log.debug("Holidays: ${productiveCalendar.holidays}")
+        log.debug("Preholidays: ${productiveCalendar.preholidays}")
         log.info("Holidays wrote to a file $jsonPath")
 
-        return holidays
+        return productiveCalendar
     }
 
-    private fun getHolidaysFromCSV(): List<LocalDate> {
-        val holidays: MutableList<LocalDate> = mutableListOf()
+    private fun getProductiveCalendarFromCSV(): ProductiveCalendar {
+        val holidays = TreeSet<LocalDate>()
+        val preholidays = TreeSet<LocalDate>()
+
         for (record: CSVRecord in getRecords()) {
             val year = record.get("Год/Месяц")
             for (month in MonthsL11n.values()) {
                 val holidaysStr: String = record.get(month.rus) ?: throw CsvParsingException("Holidays not found in month $month")
-                // Звездочкой (*) отмечены предпраздничные (сокращенные) дни. Плюсом (+) отмечены перенесенные выходные дни.
-                val days: List<String> = holidaysStr
-                        .replace(Regex("""\+|,\d\*|,\d\d\*|\d\*,|\d\d\*,"""), "") // удаляем лишние символы и предпраздничные дни
-                        .split(Regex(""",|\+,|,\d\*"""), MAX_DAYS_COUNT_IN_MONTH)
-                for (day in days) {
-                    holidays.add(LocalDate.of(year.toInt(), month.number, day.toInt()))
-                }
+                holidaysStr
+                        .split(""",""".toRegex(), MAX_DAYS_COUNT_IN_MONTH)
+                        .forEach {
+                            if (isPreholiday(it)) {
+                                preholidays.add(createDate(year, month, getPreholiday(it)))
+                            } else if (isHoliday(it)) {
+                                holidays.add(createDate(year, month, getHoliday(it)))
+                            }
+                        }
             }
         }
 
-        return holidays
+        return ProductiveCalendar(holidays, preholidays)
     }
 
+    // Прогибаемся под заголовок csv-файла с открытых данных
     private fun getRecords(): Iterable<CSVRecord> = CSVFormat.DEFAULT.withHeader(
                 "Год/Месяц", MonthsL11n.JANUARY.rus, MonthsL11n.FEBRUARY.rus, MonthsL11n.MARCH.rus, MonthsL11n.APRIL.rus,
                 MonthsL11n.MAY.rus, MonthsL11n.JUNE.rus, MonthsL11n.JULY.rus, MonthsL11n.AUGUST.rus, MonthsL11n.SEPTEMBER.rus,
@@ -85,4 +93,19 @@ class ParsingServiceImpl @Autowired constructor(
                 "Количество рабочих часов при 36-часовой рабочей неделе", "Количество рабочих часов при 24-часовой рабочей неделе"
             ).withFirstRecordAsHeader()
             .parse(FileReader(csvPath))
+
+    // Звездочкой (*) отмечены предпраздничные (сокращенные) дни
+    private fun isPreholiday(strDay: String): Boolean = """\d{1,2}\*""".toRegex().matches(strDay)
+    private fun getPreholiday(strDay: String): String = strDay.replace("""\*""".toRegex(), "")
+
+    // Плюсом (+) отмечены перенесенные выходные дни, без плюса обычные выходные дни
+    private fun isHoliday(strDay: String): Boolean = """\d{1,2}\+?""".toRegex().matches(strDay)
+    private fun getHoliday(strDay: String): String = strDay.replace("""\+""".toRegex(), "")
+
+    private fun createDate(year: String, month: MonthsL11n, day: String) =
+            try {
+                LocalDate.of(year.toInt(), month.number, day.toInt())
+            } catch (e: Exception) {
+                throw CsvParsingException("Can not create date from year: $year, month: ${month.number}, day: $day", e)
+            }
 }

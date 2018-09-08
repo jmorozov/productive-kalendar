@@ -10,9 +10,11 @@ import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import org.jetbrains.spek.api.dsl.xon
 import ru.jmorozov.prodkalendar.config.JacksonConfig
+import ru.jmorozov.prodkalendar.dto.ProductiveCalendar
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.time.LocalDate
+import java.util.*
 
 object CommandFileServiceImplSpec: Spek ({
     val objectMapper = JacksonConfig().objectMapper()
@@ -48,19 +50,25 @@ object CommandFileServiceImplSpec: Spek ({
     given("Command json file service") {
         val path = "src/test/resources/files/write/test.json"
         val pathToJsonFile = Paths.get(path)
-        val dateList = listOf(LocalDate.now())
+        val preholidays = TreeSet(listOf(LocalDate.now()))
+        val holidays = TreeSet(listOf(LocalDate.now().plusDays(1)))
+        val productiveCalendar = ProductiveCalendar(holidays, preholidays)
 
         afterEachTest {
             Files.deleteIfExists(pathToJsonFile)
             Files.deleteIfExists(pathToJsonFile.parent)
         }
 
-        on("write dates to json file") {
-            fileService.writeDatesToJsonFile(dateList, path)
+        on("write productive calendar to json file") {
+            fileService.writeDatesToJsonFile(productiveCalendar, path)
 
-            val holidays: List<LocalDate> = objectMapper.readValue(pathToJsonFile.toFile())
-            it("should write list of dates to json") {
-                holidays shouldContainAll dateList
+            val productiveCalendarFromJson: ProductiveCalendar = objectMapper.readValue(pathToJsonFile.toFile())
+            it("should write holidays to json") {
+                productiveCalendarFromJson.holidays shouldContainAll holidays
+            }
+
+            it("should write preholidays to json") {
+                productiveCalendarFromJson.preholidays shouldContainAll preholidays
             }
         }
     }
