@@ -1,7 +1,7 @@
 package ru.jmorozov.prodkalendar.service.command
 
-import java.time.LocalDate
+import ru.jmorozov.prodkalendar.dto.ProductiveCalendar
 
 interface ParsingService {
-    fun parseGov(): List<LocalDate>
+    fun parseGov(): ProductiveCalendar
 }

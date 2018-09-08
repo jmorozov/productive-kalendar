@@ -1,15 +1,17 @@
 package ru.jmorozov.prodkalendar.service.query.impl
 
+import com.fasterxml.jackson.core.JsonParseException
+import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import ru.jmorozov.prodkalendar.dto.ProductiveCalendar
 import ru.jmorozov.prodkalendar.service.query.QueryFileService
 import java.io.File
-import java.time.LocalDate
-import java.util.*
+import java.io.IOException
 import javax.cache.annotation.CacheResult
 
 @Service
@@ -21,10 +23,20 @@ class QueryFileServiceImpl @Autowired constructor(
         val log: Logger = LoggerFactory.getLogger(QueryFileServiceImpl::class.java.name)
     }
 
-    @CacheResult(cacheName = "holidays")
-    override fun readDatesFromJsonFile(pathToFile: String): TreeSet<LocalDate> {
-        log.info("Read dates from $pathToFile")
+    @CacheResult(cacheName = "productiveCalendar")
+    override fun readProductiveCalendarFromJsonFile(pathToFile: String): ProductiveCalendar {
+        log.info("Read productive calendar from $pathToFile")
 
-        return objectMapper.readValue(File(pathToFile))
+        try {
+            return objectMapper.readValue(File(pathToFile))
+        } catch (e: Exception) {
+            when (e) {
+                is JsonParseException, is JsonMappingException ->
+                    log.error("Can not parse productive calendar from json")
+                is IOException ->
+                    log.error("Can not read productive calendar json from $pathToFile")
+            }
+            throw e
+        }
     }
 }

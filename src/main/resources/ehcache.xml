@@ -11,7 +11,7 @@
         <jsr107:defaults enable-management="false" enable-statistics="true"/>
     </service>
 
-    <cache alias="holidays">
+    <cache alias="productiveCalendar">
         <resources>
             <heap>1</heap>
         </resources>

@@ -1,6 +1,12 @@
 package ru.jmorozov.prodkalendar.service.command.impl
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Service
+import ru.jmorozov.prodkalendar.dto.ProductiveCalendar
+import ru.jmorozov.prodkalendar.service.command.CommandFileService
 import java.io.File
 import java.io.FileOutputStream
 import java.net.URL
@@ -8,12 +14,6 @@ import java.nio.channels.Channels
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Service
-import ru.jmorozov.prodkalendar.service.command.CommandFileService
 
 @Service
 class CommandFileServiceImpl @Autowired constructor(
@@ -45,9 +45,9 @@ class CommandFileServiceImpl @Autowired constructor(
         return pathToFile.toFile()
     }
 
-    override fun writeDatesToJsonFile(holidays: List<LocalDate>, pathToSave: String) {
+    override fun writeDatesToJsonFile(productiveCalendar: ProductiveCalendar, pathToSave: String) {
         objectMapper.writerWithDefaultPrettyPrinter()
                 .with(SimpleDateFormat("dd.MM.yyyy"))
-                .writeValue(createFile(pathToSave), holidays)
+                .writeValue(createFile(pathToSave), productiveCalendar)
     }
 }

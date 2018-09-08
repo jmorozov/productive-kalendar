@@ -1,8 +1,7 @@
 package ru.jmorozov.prodkalendar.service.query
 
-import java.time.LocalDate
-import java.util.*
+import ru.jmorozov.prodkalendar.dto.ProductiveCalendar
 
 interface QueryFileService {
-    fun readDatesFromJsonFile(pathToFile: String): TreeSet<LocalDate>
+    fun readProductiveCalendarFromJsonFile(pathToFile: String): ProductiveCalendar
 }

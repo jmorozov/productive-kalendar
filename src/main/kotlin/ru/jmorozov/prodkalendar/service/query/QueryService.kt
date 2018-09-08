@@ -1,5 +1,7 @@
 package ru.jmorozov.prodkalendar.service.query
 
+import ru.jmorozov.prodkalendar.dto.DayType
+import ru.jmorozov.prodkalendar.dto.ProductiveCalendar
 import java.time.LocalDate
 import java.time.Year
 import java.util.*
@@ -14,4 +16,9 @@ interface QueryService {
     fun getAllHolidays(): TreeSet<LocalDate>
     fun getHolidaysByYear(year: Year): TreeSet<LocalDate>
 
+    fun getProductiveCalendar(): ProductiveCalendar
+    fun getProductiveCalendarByYear(year: Year): ProductiveCalendar
+
+    fun getDayType(date: LocalDate): DayType
+    fun getTomorrowDayType(): DayType
 }
