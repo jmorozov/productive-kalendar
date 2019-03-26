@@ -41,7 +41,7 @@ apply {
 
 application {
     group = "ru.jmorozov"
-    version = "0.0.1-SNAPSHOT"
+    version = "1.0"
     applicationName = "prod-calendar"
     mainClassName = "ru.jmorozov.prodkalendar.ProdKalendarApplicationKt"
 }
