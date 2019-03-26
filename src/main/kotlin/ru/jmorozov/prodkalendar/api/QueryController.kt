@@ -1,16 +1,16 @@
 package ru.jmorozov.prodkalendar.api
 
+import java.time.LocalDate
+import java.time.Year
+import java.time.format.DateTimeParseException
+import java.util.*
+import javax.validation.ValidationException
 import org.springframework.web.bind.annotation.*
 import ru.jmorozov.prodkalendar.dto.DateRange
 import ru.jmorozov.prodkalendar.dto.DayType
 import ru.jmorozov.prodkalendar.dto.ProductiveCalendar
 import ru.jmorozov.prodkalendar.service.query.QueryService
 import ru.jmorozov.prodkalendar.utils.normalizeDateRange
-import java.time.LocalDate
-import java.time.Year
-import java.time.format.DateTimeParseException
-import java.util.*
-import javax.validation.ValidationException
 
 @RestController
 class QueryController(private val queryService: QueryService) {
@@ -24,14 +24,17 @@ class QueryController(private val queryService: QueryService) {
     fun getHolidaysBetween(@RequestBody range: DateRange): Int {
         normalizeDateRange(range)
 
-        return queryService.holidaysCountBetween(range.start!!, range.end!!)
+        return queryService.holidaysCountBetween(range.start!!, getEnd(range))
     }
+
+    private fun getEnd(range: DateRange): LocalDate =
+            if (range.inclusive) range.end!!.plusDays(1) else range.end!!
 
     @PostMapping("/api/query/workdays/between")
     fun getWorkdaysBetween(@RequestBody range: DateRange): Int {
         normalizeDateRange(range)
 
-        return queryService.workdaysCountBetween(range.start!!, range.end!!)
+        return queryService.workdaysCountBetween(range.start!!, getEnd(range))
     }
 
     @GetMapping("/api/query/is/{dateStr}/holiday")

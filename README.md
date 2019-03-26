@@ -97,6 +97,9 @@ _RESPONSE_ отсортированный по возрастанию списо
 
 #### Получить количество рабочих дней между датами
 
+Опциональный параметр _inclusive_ типа _Boolean_ определяет, включает ли подсчет дату _end_ в интервал или нет.
+По умолчанию *false* 
+
 _POST_ http://localhost:8080/api/query/workdays/between
 
 *Content-Type: application/json*
@@ -104,13 +107,17 @@ _POST_ http://localhost:8080/api/query/workdays/between
 ```json
 {
   "start": "{date}",
-  "end": "{date}"
+  "end": "{date}",
+  "inclusive": {true or false(default)}
 }
 ```
 
-_RESPONSE_ Int - количество рабочих дней между датами, не включая последнюю дату
+_RESPONSE_ Int - количество рабочих дней между датами
 
 #### Получить количество выходных дней между датами
+
+Опциональный параметр _inclusive_ типа _Boolean_ определяет, включает ли подсчет дату _end_ в интервал или нет.
+По умолчанию *false* 
 
 _POST_ http://localhost:8080/api/query/holidays/between
 
@@ -119,11 +126,12 @@ _POST_ http://localhost:8080/api/query/holidays/between
 ```json
 {
   "start": "{date}",
-  "end": "{date}"
+  "end": "{date}",
+  "inclusive": {true or false(default)}
 }
 ```
 
-_RESPONSE_ Int - количество выходных дней между датами, не включая последнюю дату
+_RESPONSE_ Int - количество выходных дней между датами
 
 #### Получить весь производственный календарь
 
