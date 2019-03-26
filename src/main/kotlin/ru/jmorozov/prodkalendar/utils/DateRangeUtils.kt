@@ -1,8 +1,8 @@
 package ru.jmorozov.prodkalendar.utils
 
-import ru.jmorozov.prodkalendar.dto.DateRange
 import java.time.LocalDate
 import javax.validation.ValidationException
+import ru.jmorozov.prodkalendar.dto.DateRange
 
 fun normalizeDateRange(range: DateRange) {
     if (range.start == null && range.end == null) {

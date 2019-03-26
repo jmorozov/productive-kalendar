@@ -1,10 +1,10 @@
 package ru.jmorozov.prodkalendar.service.query
 
-import ru.jmorozov.prodkalendar.dto.DayType
-import ru.jmorozov.prodkalendar.dto.ProductiveCalendar
 import java.time.LocalDate
 import java.time.Year
 import java.util.*
+import ru.jmorozov.prodkalendar.dto.DayType
+import ru.jmorozov.prodkalendar.dto.ProductiveCalendar
 
 interface QueryService {
     fun holidaysCountBetween(from: LocalDate, to: LocalDate): Int

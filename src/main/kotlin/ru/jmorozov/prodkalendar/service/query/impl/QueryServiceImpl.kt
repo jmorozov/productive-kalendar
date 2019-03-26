@@ -1,5 +1,10 @@
 package ru.jmorozov.prodkalendar.service.query.impl
 
+import java.time.LocalDate
+import java.time.Month
+import java.time.Year
+import java.time.temporal.ChronoUnit
+import java.util.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -7,11 +12,6 @@ import ru.jmorozov.prodkalendar.dto.DayType
 import ru.jmorozov.prodkalendar.dto.ProductiveCalendar
 import ru.jmorozov.prodkalendar.service.query.QueryFileService
 import ru.jmorozov.prodkalendar.service.query.QueryService
-import java.time.LocalDate
-import java.time.Month
-import java.time.Period
-import java.time.Year
-import java.util.*
 
 @Service
 class QueryServiceImpl @Autowired constructor(
@@ -30,7 +30,7 @@ class QueryServiceImpl @Autowired constructor(
             (it.isAfter(from) || it.isEqual(from)) && it.isBefore(to)
 
     override fun workdaysCountBetween(from: LocalDate, to: LocalDate): Int {
-        val all = Period.between(from, to).days
+        val all = ChronoUnit.DAYS.between(from, to).toInt()
         val holidays = holidaysCountBetween(from, to)
 
         return all - holidays
